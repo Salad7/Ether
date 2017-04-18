@@ -34,7 +34,11 @@ public class MemoryRead
     static int bytesRead = 0;
     static byte[] buff;
     static byte[] buff2;
-    static Int64 baseA = 0x7FF69BBB17A0;
+    static int divisor = 1000000;
+    static Int64 baseA = 0x7FF6AF35C220;
+    static int[,] FC_N_R = new int[25,60]; //Freecourt normal right side
+    static double upDown;
+    static double rightLeft;
     [DllImport("kernel32.dll")]
     public static extern IntPtr OpenProcess(int dwDesiredAccess, bool bInheritHandle, int dwProcessId);
 
@@ -148,7 +152,8 @@ public class MemoryRead
             gamepad = controller.GetState().Gamepad;
             //if (gamepad.Buttons == GamepadButtonFlags.A)
             //{
-            Console.WriteLine(Math.Abs((int)getTiming() + 15));
+            //Console.WriteLine(Math.Abs((int)getTiming() + 15));
+            Console.WriteLine(rightLeft);
             //Thread.Sleep(5000);
             if (gamepad.Buttons == GamepadButtonFlags.RightThumb)
             {
@@ -157,7 +162,7 @@ public class MemoryRead
                 Send_Key(0x4C, 0 | 0x0008);
 
 
-                Thread.Sleep(Math.Abs((int)getTiming() + 15));
+                //Thread.Sleep(Math.Abs((int)getTiming() + 15));
 
                 Send_Key(0x4C, 0x0002 | 0x0008);
             }
@@ -171,6 +176,26 @@ public class MemoryRead
         }
 
 
+    }
+
+    public int getTimingA()
+    {
+        return FC_N_R[(((int)upDown / divisor) - 1126), (int)((rightLeft / divisor) - 3234)];
+    }
+
+    public void setRefs()
+    {
+        
+        //0,60
+        FC_N_R[0,60] = 515;
+        FC_N_R[0, 59] = 515;
+        FC_N_R[0, 58] = 515;
+        FC_N_R[0, 57] = 515;
+        FC_N_R[0, 56] = 515;
+        FC_N_R[0, 55] = 515;
+        FC_N_R[0, 54] = 515;
+        FC_N_R[0, 53] = 515;
+        FC_N_R[0, 52] = 515;
     }
 
     public static double getTiming()
@@ -331,6 +356,8 @@ public class MemoryRead
                 Console.WriteLine("Up Down " + BitConverter.ToInt32(buff2, 0));
                 Console.WriteLine(buffer[0] + " (" + bytesRead.ToString() + "bytes)");
                 Console.WriteLine("Left Right " + BitConverter.ToInt64(buff, 0));
+                rightLeft = BitConverter.ToInt64(buff, 0);
+                upDown = BitConverter.ToInt32(buff2, 0);
                 // x.Update();
 
                 //if works
