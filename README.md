@@ -10,3 +10,6 @@ to find the value faster, search for 0F 29 49 50 0F 29 40 A8 44 01 41 60 48 8B 4
 this value gives you the right to left.
 
 when u find the left to right, add 8 to this address for the up to down =)
+
+a faster soulution, search for 0F 28 41 60 0F 28 0A 44 0F 29 48 B8 48 8B D9 41 8B F0 0F 29
+find out what access this address, (when u shoot the count goes up faster so u can find it faster in my park when u fake shots) add, 10 to this address to find right left, add 8 to that address to find up down
