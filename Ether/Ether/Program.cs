@@ -34,9 +34,9 @@ public class MemoryRead
     static int bytesRead = 0;
     static byte[] buff;
     static byte[] buff2;
-    static int divisor = 1000000;
-    static Int64 baseA = 0x7FF6AF35C220;
-    static int[,] FC_N_R = new int[25,60]; //Freecourt normal right side
+    static double divisor = 1000000;
+    static Int64 baseA = 0x7FF69C427620;
+    static double[,] FC_N_R = new double[25,60]; //Freecourt normal right side
     static double upDown;
     static double rightLeft;
     [DllImport("kernel32.dll")]
@@ -133,10 +133,8 @@ public class MemoryRead
         bool connected = false;
         Keystroke xbutton;
         connected = controller.IsConnected;
-        oThread2.Start();
-        // oThread.Start();
-        // oThread2.Start();
-
+        //oThread2.Start();
+        h.Update();
         //uint ucode = (uint)Keys.A;
         //uint scancode = MapVirtualKey(ucode, MAPVK_VK_TO_VSC);
         //its doing backsapce
@@ -153,7 +151,7 @@ public class MemoryRead
             //if (gamepad.Buttons == GamepadButtonFlags.A)
             //{
             //Console.WriteLine(Math.Abs((int)getTiming() + 15));
-            Console.WriteLine(rightLeft);
+            Console.WriteLine(getTimingA());
             //Thread.Sleep(5000);
             if (gamepad.Buttons == GamepadButtonFlags.RightThumb)
             {
@@ -163,7 +161,7 @@ public class MemoryRead
 
 
                 //Thread.Sleep(Math.Abs((int)getTiming() + 15));
-
+                Thread.Sleep((int)getTimingA());
                 Send_Key(0x4C, 0x0002 | 0x0008);
             }
 
@@ -178,9 +176,16 @@ public class MemoryRead
 
     }
 
-    public int getTimingA()
+    public static double getTimingA()
     {
-        return FC_N_R[(((int)upDown / divisor) - 1126), (int)((rightLeft / divisor) - 3234)];
+        int a = (int)((rightLeft / divisor) - 3234);
+        int b = ((int) ((upDown / divisor)) - 1126);
+       
+        
+     
+        Console.WriteLine(b + " dsad");
+        Thread.Sleep(5000);
+        return FC_N_R[a, b];
     }
 
     public void setRefs()
@@ -331,15 +336,15 @@ public class MemoryRead
             buff2 = new byte[8];
             // x.Update();
             Console.WriteLine(buffer2[0] + " (" + bytesRead2.ToString() + "bytes)");
-            while (1 == 1)
-            {
+            //while (1 == 1)
+            //{
                 Console.Clear();
 
                 // 0x0046A3B8 is the address where I found the string, replace it with what you found
                 try
                 {
                     ReadProcessMemory((int)processHandle, baseA - 0x10, buffer, buffer.Length, ref bytesRead);
-                    ReadProcessMemory((int)processHandle, baseA - 0x18, buffer2, buffer2.Length, ref bytesRead2);
+                    ReadProcessMemory((int)processHandle, baseA - 0x02, buffer2, buffer2.Length, ref bytesRead2);
                 }
                 catch (System.AccessViolationException e)
                 {
@@ -384,7 +389,7 @@ public class MemoryRead
         }
     }
 
-}
+//}
 
 
 
