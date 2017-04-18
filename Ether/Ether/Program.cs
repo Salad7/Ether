@@ -178,14 +178,15 @@ public class MemoryRead
 
     public static double getTimingA()
     {
+        //b should be right left
         int a = (int)((rightLeft / divisor) - 3234);
         int b = ((int) ((upDown / divisor)) - 1126);
        
         
      
-        Console.WriteLine(b + " dsad");
+        Console.WriteLine(upDown);
         Thread.Sleep(5000);
-        return FC_N_R[a, b];
+        return FC_N_R[b, a];
     }
 
     public void setRefs()
@@ -344,7 +345,7 @@ public class MemoryRead
                 try
                 {
                     ReadProcessMemory((int)processHandle, baseA - 0x10, buffer, buffer.Length, ref bytesRead);
-                    ReadProcessMemory((int)processHandle, baseA - 0x02, buffer2, buffer2.Length, ref bytesRead2);
+                    ReadProcessMemory((int)processHandle, baseA - 0x08, buffer2, buffer2.Length, ref bytesRead2);
                 }
                 catch (System.AccessViolationException e)
                 {
