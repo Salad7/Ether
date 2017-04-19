@@ -35,7 +35,7 @@ public class MemoryRead
     static byte[] buff;
     static byte[] buff2;
     static double divisor = 1000000;
-    static Int64 baseA = 0x7FF69BFE50C0;
+    static Int64 baseA = 0x7FF697E56270;
     static double[,] FC_N_R = new double[14,58]; //Freecourt normal right side
     static double upDown;
     static double rightLeft;
@@ -133,7 +133,7 @@ public class MemoryRead
         bool connected = false;
         Keystroke xbutton;
         connected = controller.IsConnected;
-        //oThread2.Start();
+        oThread2.Start();
         h.Update();
         //uint ucode = (uint)Keys.A;
         //uint scancode = MapVirtualKey(ucode, MAPVK_VK_TO_VSC);
@@ -185,9 +185,13 @@ public class MemoryRead
        
         
      
-        Console.WriteLine("x " + b +" y" + a);
+        Console.WriteLine("x " + ((int)((upDown / divisor)) - 1138) + " y" + (int)((rightLeft / divisor) - 3234));
         //Thread.Sleep(5000);
-        return FC_N_R[b, a];
+        if(a < 58)
+        {
+            return FC_N_R[b, a];
+        }
+        return 0;
     }
 
     public static void setRefs()
