@@ -35,8 +35,8 @@ public class MemoryRead
     static byte[] buff;
     static byte[] buff2;
     static double divisor = 1000000;
-    static Int64 baseA = 0x7FF69C427620;
-    static double[,] FC_N_R = new double[25,60]; //Freecourt normal right side
+    static Int64 baseA = 0x7FF69BFE50C0;
+    static double[,] FC_N_R = new double[14,58]; //Freecourt normal right side
     static double upDown;
     static double rightLeft;
     [DllImport("kernel32.dll")]
@@ -138,6 +138,7 @@ public class MemoryRead
         //uint ucode = (uint)Keys.A;
         //uint scancode = MapVirtualKey(ucode, MAPVK_VK_TO_VSC);
         //its doing backsapce
+        setRefs();
         while (0 < 1)
         {
             //if (!connected)
@@ -151,7 +152,7 @@ public class MemoryRead
             //if (gamepad.Buttons == GamepadButtonFlags.A)
             //{
             //Console.WriteLine(Math.Abs((int)getTiming() + 15));
-            Console.WriteLine(getTimingA());
+           // Console.WriteLine(getTimingA());
             //Thread.Sleep(5000);
             if (gamepad.Buttons == GamepadButtonFlags.RightThumb)
             {
@@ -180,28 +181,81 @@ public class MemoryRead
     {
         //b should be right left
         int a = (int)((rightLeft / divisor) - 3234);
-        int b = ((int) ((upDown / divisor)) - 1126);
+        int b = ((int) ((upDown / divisor)) - 1138);
        
         
      
-        Console.WriteLine(upDown);
-        Thread.Sleep(5000);
+        Console.WriteLine("x " + b +" y" + a);
+        //Thread.Sleep(5000);
         return FC_N_R[b, a];
     }
 
-    public void setRefs()
+    public static void setRefs()
     {
-        
-        //0,60
-        FC_N_R[0,60] = 515;
-        FC_N_R[0, 59] = 515;
-        FC_N_R[0, 58] = 515;
-        FC_N_R[0, 57] = 515;
-        FC_N_R[0, 56] = 515;
-        FC_N_R[0, 55] = 515;
-        FC_N_R[0, 54] = 515;
-        FC_N_R[0, 53] = 515;
-        FC_N_R[0, 52] = 515;
+
+        //57 [Done[
+        //***************************
+        FC_N_R[0, 57] = 517;
+        FC_N_R[1, 57] = 517;
+        FC_N_R[2, 57] = 515;
+        FC_N_R[3, 57] = 515;
+        FC_N_R[4, 57] = 515;
+        FC_N_R[5, 57] = 515;
+        FC_N_R[6, 57] = 517;
+        //Check
+        FC_N_R[7, 57] = 570;
+        //1147 3292
+        FC_N_R[8, 57] = 570;
+        //1148 3292
+        FC_N_R[9, 57] = 570;
+        //CHECK
+        FC_N_R[10, 57] = 550;
+        //CHECK
+        FC_N_R[11, 57] = 545;
+        //1150 3292
+        FC_N_R[12, 57] = 545;
+        //1151 3292
+        FC_N_R[13, 57] = 545;
+        //*****************************
+
+        //56 [Done]
+        //***************************
+        FC_N_R[0, 56] = 517;
+        FC_N_R[1, 56] = 517;
+        FC_N_R[2, 56] = 515;
+        FC_N_R[3, 56] = 515;
+        FC_N_R[4, 56] = 515;
+        FC_N_R[5, 56] = 515;
+        FC_N_R[6, 56] = 517;
+        //Check
+        FC_N_R[7, 56] = 570;
+        //Check
+        FC_N_R[8, 56] = 570;
+        //Check
+        FC_N_R[9, 56] = 570;
+        FC_N_R[10, 56] = 550;
+        FC_N_R[11, 56] = 545;
+        FC_N_R[12, 56] = 545;
+        FC_N_R[13, 56] = 545;
+        //*****************************
+
+        //55 [Done]
+        //***************************
+        FC_N_R[0, 55] = 517;
+        FC_N_R[1, 55] = 517;
+        FC_N_R[2, 55] = 515;
+        FC_N_R[3, 55] = 515;
+        FC_N_R[4, 55] = 515;
+        FC_N_R[5, 55] = 515;
+        FC_N_R[6, 55] = 517;
+        FC_N_R[7, 55] = 570;
+        FC_N_R[8, 55] = 570;
+        FC_N_R[9, 55] = 570;
+        FC_N_R[10, 55] = 550;
+        FC_N_R[11, 55] = 545;
+        FC_N_R[12, 55] = 545;
+        FC_N_R[13, 55] = 545;
+        //*****************************
     }
 
     public static double getTiming()
@@ -336,6 +390,7 @@ public class MemoryRead
             byte[] buffer2 = new byte[24]; //'Hello World!' takes 12*2 bytes because of Unicode 
             buff2 = new byte[8];
             // x.Update();
+            setRefs();
             Console.WriteLine(buffer2[0] + " (" + bytesRead2.ToString() + "bytes)");
             //while (1 == 1)
             //{
@@ -362,29 +417,32 @@ public class MemoryRead
                 Console.WriteLine("Up Down " + BitConverter.ToInt32(buff2, 0));
                 Console.WriteLine(buffer[0] + " (" + bytesRead.ToString() + "bytes)");
                 Console.WriteLine("Left Right " + BitConverter.ToInt64(buff, 0));
+            
+            
                 rightLeft = BitConverter.ToInt64(buff, 0);
                 upDown = BitConverter.ToInt32(buff2, 0);
-                // x.Update();
+            Console.WriteLine(getTimingA());
+            // x.Update();
 
-                //if works
-                //if (Keyboard.IsKeyDown(Key.NumPad5))
-                //{
-                //    for (int i = 0; i < 10000; i++)
-                //    {
-                //        SendKey(0x65);
-                //    }
+            //if works
+            //if (Keyboard.IsKeyDown(Key.NumPad5))
+            //{
+            //    for (int i = 0; i < 10000; i++)
+            //    {
+            //        SendKey(0x65);
+            //    }
 
-                //    //keybd_event(0x65, 0, 0, (System.UIntPtr) 0); // KEY_DOWN
-                //    //Console.WriteLine("Up Dowfaddfadan ");
-                //    //System.Threading.Thread.Sleep(1000);
+            //    //keybd_event(0x65, 0, 0, (System.UIntPtr) 0); // KEY_DOWN
+            //    //Console.WriteLine("Up Dowfaddfadan ");
+            //    //System.Threading.Thread.Sleep(1000);
 
-                //    //keybd_event(0x65, 0, 0x02, (System.UIntPtr)0); // KEY_UP
+            //    //keybd_event(0x65, 0, 0x02, (System.UIntPtr)0); // KEY_UP
 
-                //    // KeyboardA.HoldKey((byte)Key.NumPad5, 10500);
+            //    // KeyboardA.HoldKey((byte)Key.NumPad5, 10500);
 
 
-                //}
-                Thread.Sleep(500);
+            //}
+            Thread.Sleep(500);
             }
 
         }
