@@ -35,11 +35,17 @@ public class MemoryRead
     static byte[] buff;
     static byte[] buff2;
     static double divisor = 1000000;
-    static Int64 baseA = 0x7FF60ED1E1B0;
+    static Int64 baseA = 0x7FF607B616B0;
     static double[,] FC_N_R = new double[14,58]; //Freecourt normal right side
-    static double[,] FC_N_L = new double[14, 41]; //Freecourt normal right side
+    static double[,] FC_N_L = new double[14, 41]; //Freecourt normal left side
     static double upDown;
     static double rightLeft;
+
+
+    static double[,] FC_B_R = new double[20, 46];
+    static double[,] FC_B_L = new double[20, 34];
+    static double upDownFlipped;
+    static double rightLeftFlipped;
     [DllImport("kernel32.dll")]
     public static extern IntPtr OpenProcess(int dwDesiredAccess, bool bInheritHandle, int dwProcessId);
 
@@ -187,7 +193,9 @@ public class MemoryRead
         bytesRead = 0;
         byte[] buffer = new byte[24]; //'Hello World!' takes 12*2 bytes because of Unicode 
         buff = new byte[8];
-
+        int a;
+        int aLeft;
+        int b;
         bytesRead2 = 0;
         byte[] buffer2 = new byte[24]; //'Hello World!' takes 12*2 bytes because of Unicode 
         buff2 = new byte[8];
@@ -210,23 +218,52 @@ public class MemoryRead
         rightLeft = BitConverter.ToInt64(buff, 0);
         upDown = BitConverter.ToInt32(buff2, 0);
         //b should be right left
-        int a = (int)((rightLeft / divisor) - 3234);
-        int aLeft = (int)((rightLeft / divisor) - 1105);
-        int b = ((int) ((upDown / divisor)) - 1138);
-       
-        
-     
-        Console.WriteLine("x " + ((int)((upDown / divisor)) - 1138) + "  a " + a + " left " + aLeft);
-        
-        //Thread.Sleep(5000);
-        if (b > 1 && a > 1 && a < 58 && a > 0)
-        {
-            Console.WriteLine("on right side ");
-            return FC_N_R[b, a];
+       a = (int)((rightLeft / divisor) - 3234);
+        aLeft = (int)((rightLeft / divisor) - 1105);
+        b = ((int) ((upDown / divisor)) - 1138);
+
+
+
+        //Console.WriteLine("x " + ((int)((upDown / divisor)) - 1138) + "  a " + a + " left " + aLeft);
+        Console.WriteLine("Left to Right " + ((int)((rightLeft / divisor))) + "  up to down " + ((int)((upDown / divisor))));
+        if (((int)((upDown / divisor)) < 0)){
+            //Were on the flipped side of the court
+            a = (int)(Math.Abs(upDown / divisor) - 995);
+            if ((int)((rightLeft / divisor)) < 3200)
+            {
+                //We're on the right side of the court
+                b = ((int)((upDown / divisor)) - 1099);
+                Console.WriteLine("on right side flipped");
+                if (a < 20 && a > 0 && b < 45 && b > 0)
+                    return FC_B_R[a, b];
+            }
+            else
+            {
+                //were on the left side of the court
+                b = ((int)((rightLeft / divisor)) - 3258);
+                Console.WriteLine("on left side flipped");
+                if (a < 20 && a > 0 && b < 33 && b > 0)
+                {
+                    Console.WriteLine("b is " + b + " a is " + a);
+                    return FC_B_L[a ,b];
+                }
+            }
+            aLeft = (int)((rightLeft / divisor) - 1105);
+            b = ((int)((upDown / divisor)) - 1138);
         }
-        else if (b > 1 && aLeft < 39 && aLeft > 0 ) {
-            Console.WriteLine("on left side ");
-            return FC_N_L[b, aLeft];
+        else
+        {
+            //Thread.Sleep(5000);
+            if (b > 1 && b < 14 && a > 1 && a < 58 && a > 0)
+            {
+                Console.WriteLine("on right side ");
+                return FC_N_R[b, a];
+            }
+            else if (b > 1 && b < 14 && aLeft < 39 && aLeft > 0)
+            {
+                Console.WriteLine("on left side ");
+                return FC_N_L[b, aLeft];
+            }
         }
         return 0;
     }
@@ -236,10 +273,10 @@ public class MemoryRead
         //***************************
         FC_N_L[0, 14] = 545;;
         FC_N_L[1, 14] = 545;;
-        FC_N_L[2, 14] = 530; 
-        FC_N_L[3, 14] = 530;
-        FC_N_L[4, 14] = 530;
-        FC_N_L[5, 14] = 530;
+        FC_N_L[2, 14] = 545; 
+        FC_N_L[3, 14] = 545;
+        FC_N_L[4, 14] = 545;
+        FC_N_L[5, 14] = 545;
         FC_N_L[6, 14] = 545;;
         FC_N_L[7, 14] = 545;;
         FC_N_L[8, 14] = 545;;
@@ -255,15 +292,15 @@ public class MemoryRead
         //***************************
         FC_N_L[0, 13] = 545;;
         FC_N_L[1, 13] = 545;;
-        FC_N_L[2, 13] = 530;
-        FC_N_L[3, 13] = 530;
-        FC_N_L[4, 13] = 530;
-        FC_N_L[5, 13] = 530;
+        FC_N_L[2, 13] = 545;
+        FC_N_L[3, 13] = 545;
+        FC_N_L[4, 13] = 545;
+        FC_N_L[5, 13] = 545;
         FC_N_L[6, 13] = 545;;
         FC_N_L[7, 13] = 545;;
         FC_N_L[8, 13] = 545;;
         FC_N_L[9, 13] = 545;;
-        FC_N_L[10, 13] = 530;
+        FC_N_L[10, 13] = 545;
         FC_N_L[11, 13] = 545;;
         FC_N_L[12, 13] = 545;;
         FC_N_L[13, 13] = 545;;
@@ -273,10 +310,10 @@ public class MemoryRead
         //***************************
         FC_N_L[0, 12] = 545;
         FC_N_L[1, 12] = 545;
-        FC_N_L[2, 12] = 530;
-        FC_N_L[3, 12] = 530;
-        FC_N_L[4, 12] = 530;
-        FC_N_L[5, 12] = 530;
+        FC_N_L[2, 12] = 545;
+        FC_N_L[3, 12] = 545;
+        FC_N_L[4, 12] = 545;
+        FC_N_L[5, 12] = 545;
         FC_N_L[6, 12] = 545;
         FC_N_L[7, 12] = 545;;
         FC_N_L[8, 12] = 545;;
@@ -290,10 +327,10 @@ public class MemoryRead
         //***************************
         FC_N_L[0, 11] = 545;
         FC_N_L[1, 11] = 545;
-        FC_N_L[2, 11] = 530;
-        FC_N_L[3, 11] = 530;
-        FC_N_L[4, 11] = 530;
-        FC_N_L[5, 11] = 530;
+        FC_N_L[2, 11] = 545;
+        FC_N_L[3, 11] = 545;
+        FC_N_L[4, 11] = 545;
+        FC_N_L[5, 11] = 545;
         FC_N_L[6, 11] = 545;
         FC_N_L[7, 11] = 545;;
         FC_N_L[8, 11] = 545;;
@@ -309,10 +346,10 @@ public class MemoryRead
         //***************************
         FC_N_L[0, 10] = 545;
         FC_N_L[1, 10] = 545;
-        FC_N_L[2, 10] = 530;
-        FC_N_L[3, 10] = 530;
-        FC_N_L[4, 10] = 530;
-        FC_N_L[5, 10] = 530;
+        FC_N_L[2, 10] = 545;
+        FC_N_L[3, 10] = 545;
+        FC_N_L[4, 10] = 545;
+        FC_N_L[5, 10] = 545;
         FC_N_L[6, 10] = 545;
         FC_N_L[7, 10] = 545;;
         FC_N_L[8, 10] = 545;;
@@ -327,10 +364,10 @@ public class MemoryRead
         //***************************
         FC_N_L[0, 8] = 545;
         FC_N_L[1, 8] = 545;
-        FC_N_L[2, 8] = 530;
-        FC_N_L[3, 8] = 530;
-        FC_N_L[4, 8] = 530;
-        FC_N_L[5, 8] = 530;
+        FC_N_L[2, 8] = 545;
+        FC_N_L[3, 8] = 545;
+        FC_N_L[4, 8] = 545;
+        FC_N_L[5, 8] = 545;
         FC_N_L[6, 8] = 545;
         FC_N_L[7, 8] = 545;;
         FC_N_L[8, 8] = 545;;
@@ -345,10 +382,10 @@ public class MemoryRead
         //***************************
         FC_N_L[0, 3] = 545;
         FC_N_L[1, 3] = 545;
-        FC_N_L[2, 3] = 530;
-        FC_N_L[3, 3] = 530;
-        FC_N_L[4, 3] = 530;
-        FC_N_L[5, 3] = 530;
+        FC_N_L[2, 3] = 545;
+        FC_N_L[3, 3] = 545;
+        FC_N_L[4, 3] = 545;
+        FC_N_L[5, 3] = 545;
         FC_N_L[6, 3] = 545;
         //Check
         FC_N_L[7, 3] = 545;;
@@ -366,10 +403,10 @@ public class MemoryRead
         //***************************
         FC_N_L[0, 4] = 545;
         FC_N_L[1, 4] = 545;
-        FC_N_L[2, 4] = 530;
-        FC_N_L[3, 4] = 530;
-        FC_N_L[4, 4] = 530;
-        FC_N_L[5, 4] = 530;
+        FC_N_L[2, 4] = 545;
+        FC_N_L[3, 4] = 545;
+        FC_N_L[4, 4] = 545;
+        FC_N_L[5, 4] = 545;
         FC_N_L[6, 4] = 545;
         FC_N_L[7, 4] = 545;;
         FC_N_L[8, 4] = 545;;
@@ -384,10 +421,10 @@ public class MemoryRead
         //***************************
         FC_N_L[0, 5] = 545;
         FC_N_L[1, 5] = 545;
-        FC_N_L[2, 5] = 530;
-        FC_N_L[3, 5] = 530;
-        FC_N_L[4, 5] = 530;
-        FC_N_L[5, 5] = 530;
+        FC_N_L[2, 5] = 545;
+        FC_N_L[3, 5] = 545;
+        FC_N_L[4, 5] = 545;
+        FC_N_L[5, 5] = 545;
         FC_N_L[6, 5] = 545;
         FC_N_L[7, 5] = 545;;
         FC_N_L[8, 5] = 545;;
@@ -403,10 +440,10 @@ public class MemoryRead
         //***************************
         FC_N_L[0, 6] = 545;
         FC_N_L[1, 6] = 545;
-        FC_N_L[2, 6] = 530;
-        FC_N_L[3, 6] = 530;
-        FC_N_L[4, 6] = 530;
-        FC_N_L[5, 6] = 530;
+        FC_N_L[2, 6] = 545;
+        FC_N_L[3, 6] = 545;
+        FC_N_L[4, 6] = 545;
+        FC_N_L[5, 6] = 545;
         FC_N_L[6, 6] = 545;
         FC_N_L[7, 6] = 545;;
         FC_N_L[8, 6] = 545;;
@@ -421,10 +458,10 @@ public class MemoryRead
         //***************************
         FC_N_L[0, 7] = 545;
         FC_N_L[1, 7] = 545;
-        FC_N_L[2, 7] = 530;
-        FC_N_L[3, 7] = 530;
-        FC_N_L[4, 7] = 530;
-        FC_N_L[5, 7] = 530;
+        FC_N_L[2, 7] = 545;
+        FC_N_L[3, 7] = 545;
+        FC_N_L[4, 7] = 545;
+        FC_N_L[5, 7] = 545;
         FC_N_L[6, 7] = 545;
         FC_N_L[7, 7] = 545;;
         FC_N_L[8, 7] = 545;;
@@ -438,10 +475,10 @@ public class MemoryRead
         //***************************
         FC_N_L[0, 9] = 545;
         FC_N_L[1, 9] = 545;
-        FC_N_L[2, 9] = 530;
-        FC_N_L[3, 9] = 530;
-        FC_N_L[4, 9] = 530;
-        FC_N_L[5, 9] = 530;
+        FC_N_L[2, 9] = 545;
+        FC_N_L[3, 9] = 545;
+        FC_N_L[4, 9] = 545;
+        FC_N_L[5, 9] = 545;
         FC_N_L[6, 9] = 545;
         FC_N_L[7, 9] = 545;;
         FC_N_L[8, 9] = 545;;
@@ -566,10 +603,10 @@ public class MemoryRead
         //***************************
         FC_N_L[0, 35] = 545;
         FC_N_L[1, 35] = 545;
-        FC_N_L[2, 35] = 530;
-        FC_N_L[3, 35] = 530;
-        FC_N_L[4, 35] = 530;
-        FC_N_L[5, 35] = 530;
+        FC_N_L[2, 35] = 545;
+        FC_N_L[3, 35] = 545;
+        FC_N_L[4, 35] = 545;
+        FC_N_L[5, 35] = 545;
         FC_N_L[6, 35] = 545;
         FC_N_L[7, 35] = 545;;
         FC_N_L[8, 35] = 545;;
@@ -585,10 +622,10 @@ public class MemoryRead
         //***************************
         FC_N_L[0, 34] = 545;
         FC_N_L[1, 34] = 545;
-        FC_N_L[2, 34] = 530;
-        FC_N_L[3, 34] = 530;
-        FC_N_L[4, 34] = 530;
-        FC_N_L[5, 34] = 530;
+        FC_N_L[2, 34] = 545;
+        FC_N_L[3, 34] = 545;
+        FC_N_L[4, 34] = 545;
+        FC_N_L[5, 34] = 545;
         FC_N_L[6, 34] = 545;
         FC_N_L[7, 34] = 545;;
         FC_N_L[8, 34] = 545;;
@@ -970,10 +1007,10 @@ public class MemoryRead
         //***************************
         FC_N_R[0, 57] = 517;
         FC_N_R[1, 57] = 517;
-        FC_N_R[2, 57] = 530;
-        FC_N_R[3, 57] = 530;
-        FC_N_R[4, 57] = 530;
-        FC_N_R[5, 57] = 530;
+        FC_N_R[2, 57] = 545;
+        FC_N_R[3, 57] = 545;
+        FC_N_R[4, 57] = 545;
+        FC_N_R[5, 57] = 545;
         FC_N_R[6, 57] = 517;
         //Check
         FC_N_R[7, 57] = 545;;
@@ -995,10 +1032,10 @@ public class MemoryRead
         //***************************
         FC_N_R[0, 56] = 517;
         FC_N_R[1, 56] = 517;
-        FC_N_R[2, 56] = 530;
-        FC_N_R[3, 56] = 530;
-        FC_N_R[4, 56] = 530;
-        FC_N_R[5, 56] = 530;
+        FC_N_R[2, 56] = 545;
+        FC_N_R[3, 56] = 545;
+        FC_N_R[4, 56] = 545;
+        FC_N_R[5, 56] = 545;
         FC_N_R[6, 56] = 517;
         //Check
         FC_N_R[7, 56] = 545;;
@@ -1016,10 +1053,10 @@ public class MemoryRead
         //***************************
         FC_N_R[0, 55] = 517;
         FC_N_R[1, 55] = 517;
-        FC_N_R[2, 55] = 530;
-        FC_N_R[3, 55] = 530;
-        FC_N_R[4, 55] = 530;
-        FC_N_R[5, 55] = 530;
+        FC_N_R[2, 55] = 545;
+        FC_N_R[3, 55] = 545;
+        FC_N_R[4, 55] = 545;
+        FC_N_R[5, 55] = 545;
         FC_N_R[6, 55] = 517;
         FC_N_R[7, 55] = 545;;
         FC_N_R[8, 55] = 545;;
@@ -1034,10 +1071,10 @@ public class MemoryRead
         //***************************
         FC_N_R[0, 54] = 517;
         FC_N_R[1, 54] = 517;
-        FC_N_R[2, 54] = 530;
-        FC_N_R[3, 54] = 530;
-        FC_N_R[4, 54] = 530;
-        FC_N_R[5, 54] = 530;
+        FC_N_R[2, 54] = 545;
+        FC_N_R[3, 54] = 545;
+        FC_N_R[4, 54] = 545;
+        FC_N_R[5, 54] = 545;
         FC_N_R[6, 54] = 517;
         FC_N_R[7, 54] = 545;;
         FC_N_R[8, 54] = 545;;
@@ -1053,15 +1090,15 @@ public class MemoryRead
         //***************************
         FC_N_R[0, 53] = 517;
         FC_N_R[1, 53] = 517;
-        FC_N_R[2, 53] = 530;
-        FC_N_R[3, 53] = 530;
-        FC_N_R[4, 53] = 530;
-        FC_N_R[5, 53] = 530;
+        FC_N_R[2, 53] = 545;
+        FC_N_R[3, 53] = 545;
+        FC_N_R[4, 53] = 545;
+        FC_N_R[5, 53] = 545;
         FC_N_R[6, 53] = 517;
         FC_N_R[7, 53] = 545;;
         FC_N_R[8, 53] = 545;;
         FC_N_R[9, 53] = 545;;
-        FC_N_R[10, 53] = 530;
+        FC_N_R[10, 53] = 545;
         FC_N_R[11, 53] = 545;;
         FC_N_R[12, 53] = 545;;
         FC_N_R[13, 53] = 545;;
@@ -1071,10 +1108,10 @@ public class MemoryRead
         //***************************
         FC_N_R[0, 52] = 517;
         FC_N_R[1, 52] = 517;
-        FC_N_R[2, 52] = 530;
-        FC_N_R[3, 52] = 530;
-        FC_N_R[4, 52] = 530;
-        FC_N_R[5, 52] = 530;
+        FC_N_R[2, 52] = 545;
+        FC_N_R[3, 52] = 545;
+        FC_N_R[4, 52] = 545;
+        FC_N_R[5, 52] = 545;
         FC_N_R[6, 52] = 517;
         FC_N_R[7, 52] = 545;;
         FC_N_R[8, 52] = 545;;
@@ -1088,10 +1125,10 @@ public class MemoryRead
         //***************************
         FC_N_R[0, 51] = 517;
         FC_N_R[1, 51] = 517;
-        FC_N_R[2, 51] = 530;
-        FC_N_R[3, 51] = 530;
-        FC_N_R[4, 51] = 530;
-        FC_N_R[5, 51] = 530;
+        FC_N_R[2, 51] = 545;
+        FC_N_R[3, 51] = 545;
+        FC_N_R[4, 51] = 545;
+        FC_N_R[5, 51] = 545;
         FC_N_R[6, 51] = 517;
         FC_N_R[7, 51] = 545;;
         FC_N_R[8, 51] = 545;;
@@ -1107,10 +1144,10 @@ public class MemoryRead
         //***************************
         FC_N_R[0, 50] = 517;
         FC_N_R[1, 50] = 517;
-        FC_N_R[2, 50] = 530;
-        FC_N_R[3, 50] = 530;
-        FC_N_R[4, 50] = 530;
-        FC_N_R[5, 50] = 530;
+        FC_N_R[2, 50] = 545;
+        FC_N_R[3, 50] = 545;
+        FC_N_R[4, 50] = 545;
+        FC_N_R[5, 50] = 545;
         FC_N_R[6, 50] = 517;
         FC_N_R[7, 50] = 545;;
         FC_N_R[8, 50] = 545;;
@@ -1125,10 +1162,10 @@ public class MemoryRead
         //***************************
         FC_N_R[0, 49] = 517;
         FC_N_R[1, 49] = 517;
-        FC_N_R[2, 49] = 530;
-        FC_N_R[3, 49] = 530;
-        FC_N_R[4, 49] = 530;
-        FC_N_R[5, 49] = 530;
+        FC_N_R[2, 49] = 545;
+        FC_N_R[3, 49] = 545;
+        FC_N_R[4, 49] = 545;
+        FC_N_R[5, 49] = 545;
         FC_N_R[6, 49] = 517;
         FC_N_R[7, 49] = 545;;
         FC_N_R[8, 49] = 545;;
@@ -1143,10 +1180,10 @@ public class MemoryRead
         //***************************
         FC_N_R[0, 43] = 487;
         FC_N_R[1, 43] = 487;
-        FC_N_R[2, 43] = 530;
-        FC_N_R[3, 43] = 530;
-        FC_N_R[4, 43] = 530;
-        FC_N_R[5, 43] = 530;
+        FC_N_R[2, 43] = 545;
+        FC_N_R[3, 43] = 545;
+        FC_N_R[4, 43] = 545;
+        FC_N_R[5, 43] = 545;
         FC_N_R[6, 43] = 487;
         //Check
         FC_N_R[7, 43] = 545;;
@@ -1164,10 +1201,10 @@ public class MemoryRead
         //***************************
         FC_N_R[0, 44] = 487;
         FC_N_R[1, 44] = 487;
-        FC_N_R[2, 44] = 530;
-        FC_N_R[3, 44] = 530;
-        FC_N_R[4, 44] = 530;
-        FC_N_R[5, 44] = 530;
+        FC_N_R[2, 44] = 545;
+        FC_N_R[3, 44] = 545;
+        FC_N_R[4, 44] = 545;
+        FC_N_R[5, 44] = 545;
         FC_N_R[6, 44] = 487;
         FC_N_R[7, 44] = 545;;
         FC_N_R[8, 44] = 545;;
@@ -1182,10 +1219,10 @@ public class MemoryRead
         //***************************
         FC_N_R[0, 45] = 487;
         FC_N_R[1, 45] = 487;
-        FC_N_R[2, 45] = 530;
-        FC_N_R[3, 45] = 530;
-        FC_N_R[4, 45] = 530;
-        FC_N_R[5, 45] = 530;
+        FC_N_R[2, 45] = 545;
+        FC_N_R[3, 45] = 545;
+        FC_N_R[4, 45] = 545;
+        FC_N_R[5, 45] = 545;
         FC_N_R[6, 45] = 487;
         FC_N_R[7, 45] = 545;;
         FC_N_R[8, 45] = 545;;
@@ -1201,10 +1238,10 @@ public class MemoryRead
         //***************************
         FC_N_R[0, 46] = 487;
         FC_N_R[1, 46] = 487;
-        FC_N_R[2, 46] = 530;
-        FC_N_R[3, 46] = 530;
-        FC_N_R[4, 46] = 530;
-        FC_N_R[5, 46] = 530;
+        FC_N_R[2, 46] = 545;
+        FC_N_R[3, 46] = 545;
+        FC_N_R[4, 46] = 545;
+        FC_N_R[5, 46] = 545;
         FC_N_R[6, 46] = 487;
         FC_N_R[7, 46] = 545;;
         FC_N_R[8, 46] = 545;;
@@ -1219,10 +1256,10 @@ public class MemoryRead
         //***************************
         FC_N_R[0, 47] = 487;
         FC_N_R[1, 47] = 487;
-        FC_N_R[2, 47] = 530;
-        FC_N_R[3, 47] = 530;
-        FC_N_R[4, 47] = 530;
-        FC_N_R[5, 47] = 530;
+        FC_N_R[2, 47] = 545;
+        FC_N_R[3, 47] = 545;
+        FC_N_R[4, 47] = 545;
+        FC_N_R[5, 47] = 545;
         FC_N_R[6, 47] = 487;
         FC_N_R[7, 47] = 545;;
         FC_N_R[8, 47] = 545;;
@@ -1236,10 +1273,10 @@ public class MemoryRead
         //***************************
         FC_N_R[0, 48] = 487;
         FC_N_R[1, 48] = 487;
-        FC_N_R[2, 48] = 530;
-        FC_N_R[3, 48] = 530;
-        FC_N_R[4, 48] = 530;
-        FC_N_R[5, 48] = 530;
+        FC_N_R[2, 48] = 545;
+        FC_N_R[3, 48] = 545;
+        FC_N_R[4, 48] = 545;
+        FC_N_R[5, 48] = 545;
         FC_N_R[6, 48] = 487;
         FC_N_R[7, 48] = 545;;
         FC_N_R[8, 48] = 545;;
@@ -1385,10 +1422,10 @@ public class MemoryRead
         //***************************
         FC_N_R[0, 35] = 517;
         FC_N_R[1, 35] = 517;
-        FC_N_R[2, 35] = 530;
-        FC_N_R[3, 35] = 530;
-        FC_N_R[4, 35] = 530;
-        FC_N_R[5, 35] = 530;
+        FC_N_R[2, 35] = 545;
+        FC_N_R[3, 35] = 545;
+        FC_N_R[4, 35] = 545;
+        FC_N_R[5, 35] = 545;
         FC_N_R[6, 35] = 517;
         FC_N_R[7, 35] = 545;;
         FC_N_R[8, 35] = 545;;
@@ -1404,10 +1441,10 @@ public class MemoryRead
         //***************************
         FC_N_R[0, 34] = 517;
         FC_N_R[1, 34] = 517;
-        FC_N_R[2, 34] = 530;
-        FC_N_R[3, 34] = 530;
-        FC_N_R[4, 34] = 530;
-        FC_N_R[5, 34] = 530;
+        FC_N_R[2, 34] = 545;
+        FC_N_R[3, 34] = 545;
+        FC_N_R[4, 34] = 545;
+        FC_N_R[5, 34] = 545;
         FC_N_R[6, 34] = 517;
         FC_N_R[7, 34] = 545;;
         FC_N_R[8, 34] = 545;;
@@ -1426,7 +1463,7 @@ public class MemoryRead
         //    {
         //        //Console.WriteLine(GamepadButtonFlags.X);
         //       // Thread.Sleep(1000);
-        //        return 530;
+        //        return 545;
         //    }
         //    if (BitConverter.ToInt64(buff, 0) > 3285000000 && BitConverter.ToInt64(buff, 0) < 3288000000 && BitConverter.ToInt32(buff2, 0) > 11545;00000 && BitConverter.ToInt32(buff2, 0) < 11545;;0000)
         //    {
@@ -1438,7 +1475,7 @@ public class MemoryRead
         //    {
         //        Console.WriteLine(GamepadButtonFlags.X);
         //        // Thread.Sleep(1000);
-        //        return 530;
+        //        return 545;
         //    }
         if (((((double)BitConverter.ToInt64(buff, 0) / BitConverter.ToInt32(buff2, 0)) * 2.08)) * 100 > 0)
         {
