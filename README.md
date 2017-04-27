@@ -1,4 +1,4 @@
-# Ether V.2 latest
+# Ether V.2 latest.
 Positional System
 
 to find y coor for 2k17,
